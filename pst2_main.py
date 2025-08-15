@@ -42,7 +42,18 @@ def save_data(path=DATA_FILE):
         json.dump(app_data, f, indent=4)
     print("Data saved successfully.")
 
-#fragment 2 
+#fragment 2
+
+# --- Helper function ---
+def get_nonempty_input(prompt):
+    """Prompts until the user enters a non-empty string."""
+    while True:
+        value = input(prompt).strip()
+        if value:
+            return value
+        print("Input cannot be empty. Please try again.")
+
+#fragment 3
 # --- Full CRUD for Core Data ---
 # Note: We are now working with lists of dictionaries, not lists of objects.
 
@@ -73,17 +84,20 @@ def update_teacher(teacher_id, **fields):
 def remove_student(student_id):
     """Removes a student from the data store."""
     # TODO: Find the student dictionary in app_data['students'] with the matching ID.
-    for student in app_data['students']:
-        if student['id'] == student_id:
+    for i in range(len(app_data['attendance'])): 
+        #attendance is a dictionary
+        if app_data['attendance'][i]['student_id'] == student_id:
     # If found, use the .remove() method on the list to delete it.
-            app_data['students'].remove(student)
+            app_data['attendance'].remove(app_data['attendance'][i])
             print(f"Student {student_id} removed.")
             return
     print(f"Error: Student with ID {student_id} not found.")
     # A list comprehension is a clean way to do this:
     # app_data['students'] = [s for s in app_data['students'] if s['id'] != student_id]
-    
-    
+
+    # A list comprehension is a clean way to do this:
+    app_data['students'] = [s for s in app_data['students'] if s['id'] != student_id]
+
 # TODO: Implement remove_teacher() and update_student() using the patterns above.
 def remove_teacher(teacher_id):
     """Removes a teacher from the data store."""
@@ -103,7 +117,7 @@ def update_student(student_id, **fields):
             return
     print(f"Error: Student with ID {student_id} not found.") 
 
-#fragment 3
+#fragment 4
 # --- New Receptionist Features ---
 def check_in(student_id, course_id, timestamp=None):
     """Records a student's attendance for a course."""
@@ -146,3 +160,63 @@ def print_student_card(student_id):
         print(f"Printed student card to {filename}.")
     else:
         print(f"Error: Could not print card, student {student_id} not found.")
+    
+# --- Main Application Loop ---
+def main():
+    """Main function to run the MSMS application."""
+    load_data() # Load all data from file at startup.
+
+    while True:
+        print("\n===== MSMS v2 (Persistent) =====")
+        print("1. Check-in Student")
+        print("2. Print Student Card")
+        print("3. Update Teacher Info")
+        print("4. Remove Student")
+        print("q. Quit and Save")
+        
+        choice = get_nonempty_input("Enter your choice: ")
+        
+        made_change = False # A flag to track if we need to save
+        if choice == '1':
+            # TODO: Get student_id and course_id from user, then call check_in().
+            student_id = int(get_nonempty_input("Enter student ID: "))
+            course_id = int(get_nonempty_input("Enter course ID: "))
+            check_in(student_id, course_id)
+            made_change = True
+
+        elif choice == '2':
+            # TODO: Get student_id, then call print_student_card().
+            student_id = int(get_nonempty_input("Enter student ID: "))
+            print_student_card(student_id)
+            made_change = True
+
+            # No change made, so no save needed
+
+        elif choice == '3':
+            # TODO: Get teacher_id and new details, then call update_teacher().
+            teacher_id = int(get_nonempty_input("Enter teacher ID: "))
+            new_speciality = get_nonempty_input("Enter new speciality: ")
+            update_teacher(teacher_id, speciality=new_speciality)
+
+            # Example: update_teacher(1, speciality="Advanced Piano")
+            made_change = True
+        elif choice == '4':
+            # TODO: Get student_id, then call remove_student().
+            student_id = int(get_nonempty_input("Enter student ID: "))
+            remove_student(student_id)
+            made_change = True
+        elif choice.lower() == 'q':
+            print("Saving final changes and exiting.")
+            break
+        else:
+            print("Invalid choice.")
+
+            
+        if made_change:
+            save_data() # Save the data immediately after any change.
+
+    save_data() # One final save on exit.
+
+# --- Program Start ---
+if __name__ == "__main__":
+    main()
