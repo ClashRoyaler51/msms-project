@@ -43,6 +43,8 @@ class ScheduleManager:
             # Since it's already a list of dicts, no conversion is needed.
             "attendance": self.attendance_log,
             # ... (next_id counters) ...
+            #
+
         }
         # TODO: Write 'data_to_save' to the JSON file.
         with open(self.data_path, 'w') as f:
