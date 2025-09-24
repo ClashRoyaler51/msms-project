@@ -10,33 +10,12 @@ PST5 is a music school management system designed to help administrators manage 
 - Search for students by name
 - Data persistence using JSON files
 
-## Project Structure
-```
-PST5/
-├── main.py                # Streamlit app entry point
-├── msms.json              # Data file (if present)
-├── app/
-│   ├── schedule.py        # Business logic and data management
-│   ├── student.py         # StudentUser class
-│   ├── teacher.py         # TeacherUser and Course classes
-│   └── user.py            # Base User class
-├── gui/
-│   ├── main_dashboard.py  # Main dashboard and navigation
-│   ├── roster_pages.py    # Roster and check-in UI
-│   └── student_pages.py   # Student management UI
-└── data/
-    └── msms.json          # Data storage (created at runtime)
-```
-
-## Getting Started
-1. **Install dependencies:**
-   - Python 3.12+
+1. **Packages Used:**
    - Streamlit
    - pandas
-   - (Optional) Anaconda for environment management
 
 2. **Run the app:**
-   ```sh
+   ```
    streamlit run PST5/main.py
    ```
 
@@ -47,9 +26,3 @@ PST5/
 ## Data Storage
 - All data is stored in `data/msms.json`.
 - The app will create the file and directory if they do not exist.
-
-## Contributing
-Pull requests and suggestions are welcome!
-
-## License
-MIT License
