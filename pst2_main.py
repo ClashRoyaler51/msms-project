@@ -42,8 +42,6 @@ def save_data(path=DATA_FILE):
         json.dump(app_data, f, indent=4)
     print("Data saved successfully.")
 
-#fragment 2
-
 # --- Helper function ---
 def get_nonempty_input(prompt):
     """Prompts until the user enters a non-empty string."""
@@ -53,29 +51,19 @@ def get_nonempty_input(prompt):
             return value
         print("Input cannot be empty. Please try again.")
 
-#fragment 3
 # --- Full CRUD for Core Data ---
-# Note: We are now working with lists of dictionaries, not lists of objects.
-
 def add_teacher(name, speciality):
     """Adds a teacher dictionary to the data store."""
-    # TODO: Get the next teacher ID from app_data['next_teacher_id'].
     teacher_id = app_data['next_teacher_id']
-    # TODO: Create a new teacher dictionary with 'id', 'name', and 'speciality' keys.
     new_teacher = {"id": teacher_id, "name": name, "speciality": speciality}
-    # TODO: Append the new dictionary to the app_data['teachers'] list.
     app_data['teachers'].append(new_teacher)
-    # TODO: Increment the 'next_teacher_id' in app_data.
     app_data['next_teacher_id'] += 1
     print(f"Core: Teacher '{name}' added.")
 
 def update_teacher(teacher_id, **fields):
     """Finds a teacher by ID and updates their data with provided fields."""
-    # TODO: Loop through the app_data['teachers'] list.
     for teacher in app_data['teachers']:
-        # TODO: If a teacher's 'id' matches teacher_id:
         if teacher['id'] == teacher_id:
-            # Use the .update() method on the teacher dictionary to apply the 'fields'.
             teacher.update(fields)
             print(f"Teacher {teacher_id} updated.")
             return
@@ -83,22 +71,14 @@ def update_teacher(teacher_id, **fields):
 
 def remove_student(student_id):
     """Removes a student from the data store."""
-    # TODO: Find the student dictionary in app_data['students'] with the matching ID.
     for i in range(len(app_data['attendance'])): 
-        #attendance is a dictionary
         if app_data['attendance'][i]['student_id'] == student_id:
-    # If found, use the .remove() method on the list to delete it.
             app_data['attendance'].remove(app_data['attendance'][i])
             print(f"Student {student_id} removed.")
             return
-    print(f"Error: Student with ID {student_id} not found.")
-    # A list comprehension is a clean way to do this:
-    # app_data['students'] = [s for s in app_data['students'] if s['id'] != student_id]
-
-    # A list comprehension is a clean way to do this:
     app_data['students'] = [s for s in app_data['students'] if s['id'] != student_id]
+    print(f"Student {student_id} removed.")
 
-# TODO: Implement remove_teacher() and update_student() using the patterns above.
 def remove_teacher(teacher_id):
     """Removes a teacher from the data store."""
     for teacher in app_data['teachers']:
@@ -117,7 +97,6 @@ def update_student(student_id, **fields):
             return
     print(f"Error: Student with ID {student_id} not found.") 
 
-#fragment 4
 # --- New Receptionist Features ---
 def check_in(student_id, course_id, timestamp=None):
     """Records a student's attendance for a course."""
@@ -125,8 +104,38 @@ def check_in(student_id, course_id, timestamp=None):
         # TODO: Get the current time as a string using datetime.datetime.now().isoformat()
         timestamp = datetime.datetime.now().isoformat()
     
+    # --- Inline fix: create student if missing ---
+    student = None
+    for s in app_data['students']:
+        if s['id'] == student_id:
+            student = s
+            break
+    if student is None:
+        student = {"id": student_id, "name": f"Student{student_id}", "enrolled_in": []}
+        app_data['students'].append(student)
+        print(f"Info: Created dummy student with ID {student_id}")
+
+    # --- Inline fix: create courses structure if missing ---
+    if 'courses' not in app_data:
+        app_data['courses'] = []
+
+    course = None
+    for c in app_data['courses']:
+        if c['id'] == course_id:
+            course = c
+            break
+    if course is None:
+        course = {"id": course_id, "name": f"Course{course_id}", "instrument": "", "enrolled_students": []}
+        app_data['courses'].append(course)
+        print(f"Info: Created dummy course with ID {course_id}")
+
+    # Add student to course and course to student
+    if course_id not in student.get('enrolled_in', []):
+        student.setdefault('enrolled_in', []).append(course_id)
+    if student_id not in course.get('enrolled_students', []):
+        course.setdefault('enrolled_students', []).append(student_id)
+
     # TODO: Create a check-in record dictionary.
-    # It should contain 'student_id', 'course_id', and 'timestamp'.
     check_in_record = {
         "student_id": student_id,
         "course_id": course_id,
@@ -135,10 +144,10 @@ def check_in(student_id, course_id, timestamp=None):
     # TODO: Append this new record to the app_data['attendance'] list.
     app_data['attendance'].append(check_in_record)
     print(f"Receptionist: Student {student_id} checked into {course_id}.")
+    save_data()  # <- ensures JSON is updated immediately
 
 def print_student_card(student_id):
     """Creates a text file badge for a student."""
-    # TODO: Find the student dictionary in app_data['students'].
     student_to_print = None
     for s in app_data['students']:
         if s['id'] == student_id:
@@ -146,17 +155,14 @@ def print_student_card(student_id):
             break
     
     if student_to_print:
-        # TODO: Create a filename, e.g., f"{student_id}_card.txt".
         filename = f"{student_id}_card.txt"
-        # TODO: Open the file in write mode ('w').
         with open(filename, 'w') as f:
-            # Write the student's details to the file in a nice format.
             f.write("========================\n")
             f.write(f"  MUSIC SCHOOL ID BADGE\n")
             f.write("========================\n")
             f.write(f"ID: {student_to_print['id']}\n")
             f.write(f"Name: {student_to_print['name']}\n")
-            f.write(f"Enrolled In: {', '.join(student_to_print.get('enrolled_in', []))}\n")
+            f.write(f"Enrolled In: {', '.join(str(cid) for cid in student_to_print.get('enrolled_in', []))}\n")
         print(f"Printed student card to {filename}.")
     else:
         print(f"Error: Could not print card, student {student_id} not found.")
@@ -178,40 +184,33 @@ def main():
         
         made_change = False # A flag to track if we need to save
         if choice == '1':
-            # TODO: Get student_id and course_id from user, then call check_in().
             student_id = int(get_nonempty_input("Enter student ID: "))
             course_id = int(get_nonempty_input("Enter course ID: "))
             check_in(student_id, course_id)
-            made_change = True
+            made_change = False  # already saved inside check_in()
 
         elif choice == '2':
-            # TODO: Get student_id, then call print_student_card().
             student_id = int(get_nonempty_input("Enter student ID: "))
             print_student_card(student_id)
-            made_change = True
-
-            # No change made, so no save needed
+            made_change = False
 
         elif choice == '3':
-            # TODO: Get teacher_id and new details, then call update_teacher().
             teacher_id = int(get_nonempty_input("Enter teacher ID: "))
             new_speciality = get_nonempty_input("Enter new speciality: ")
             update_teacher(teacher_id, speciality=new_speciality)
-
-            # Example: update_teacher(1, speciality="Advanced Piano")
             made_change = True
+
         elif choice == '4':
-            # TODO: Get student_id, then call remove_student().
             student_id = int(get_nonempty_input("Enter student ID: "))
             remove_student(student_id)
             made_change = True
+
         elif choice.lower() == 'q':
             print("Saving final changes and exiting.")
             break
         else:
             print("Invalid choice.")
 
-            
         if made_change:
             save_data() # Save the data immediately after any change.
 

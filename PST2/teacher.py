@@ -1,4 +1,4 @@
-from app.user import User
+from user import User
 
 class TeacherUser(User):
     """Represents a teacher."""
@@ -7,6 +7,8 @@ class TeacherUser(User):
     def __init__(self, user_id, name, speciality):
         super().__init__(user_id, name)
         self.speciality = speciality
+        self.user_id = user_id
+        self.name = name
 
 class Course:
     """Represents a single course offered by the school, linked to a teacher."""
