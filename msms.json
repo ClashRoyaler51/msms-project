@@ -1,7 +1,31 @@
 {
-    "students": [],
+    "students": [
+        {
+            "id": 1,
+            "name": "Student1",
+            "enrolled_in": [
+                1
+            ]
+        }
+    ],
     "teachers": [],
-    "attendance": [],
+    "attendance": [
+        {
+            "student_id": 1,
+            "course_id": 1,
+            "timestamp": "2025-09-09T15:20:39.336148"
+        }
+    ],
     "next_student_id": 1,
-    "next_teacher_id": 1
+    "next_teacher_id": 1,
+    "courses": [
+        {
+            "id": 1,
+            "name": "Course1",
+            "instrument": "",
+            "enrolled_students": [
+                1
+            ]
+        }
+    ]
 }
