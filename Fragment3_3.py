@@ -21,3 +21,14 @@ def check_in(self, student_id, course_id):
     return True
 
 # TODO: Also implement find_student_by_id and find_course_by_id helper methods.
+def find_student_by_id(self, student_id):
+    for student in self.students:
+        if student.id == student_id:
+            return student
+    return None
+
+def find_course_by_id(self, course_id):
+    for course in self.courses:
+        if course.id == course_id:
+            return course
+    return None
