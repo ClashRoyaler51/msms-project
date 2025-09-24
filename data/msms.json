@@ -1,0 +1,41 @@
+{
+    "students": [
+        {
+            "id": null,
+            "name": "Daniel",
+            "instrument": "Piano",
+            "lessons": [],
+            "enrolled_course_ids": []
+        },
+        {
+            "id": null,
+            "name": "DanTDM",
+            "instrument": "Guitar",
+            "lessons": [],
+            "enrolled_course_ids": []
+        },
+        {
+            "id": null,
+            "name": "Goon",
+            "instrument": "Thomas Ly",
+            "lessons": [],
+            "enrolled_course_ids": []
+        },
+        {
+            "id": null,
+            "name": "andrew",
+            "instrument": "fish",
+            "lessons": [],
+            "enrolled_course_ids": []
+        },
+        {
+            "id": null,
+            "name": "Raymond",
+            "instrument": "Gay",
+            "lessons": [],
+            "enrolled_course_ids": []
+        }
+    ],
+    "teachers": [],
+    "courses": []
+}

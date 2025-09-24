@@ -13,6 +13,14 @@ class ScheduleManager:
         self.next_lesson_id = 1
         self._load_data()
 
+    def register_new_student(self, name, instrument):
+        """Registers a new student and adds them to the students list."""
+        
+        new_student = StudentUser(name=name, instrument=instrument, lessons=[])
+        self.students.append(new_student)
+        self._save_data()
+        return new_student
+
     def _load_data(self):
         """Loads data from the JSON file and populates the object lists."""
         try:

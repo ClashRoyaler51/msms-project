@@ -1,8 +1,9 @@
 # gui/student_pages.py
 import streamlit as st
-
+from app.schedule import ScheduleManager
 def show_student_management_page(manager):
     """Renders all components for the student management page."""
+    # Use the passed-in manager for all operations so new students are immediately available
     st.header("Student Management")
 
     # --- Search Section (remains the same) ---
@@ -13,7 +14,7 @@ def show_student_management_page(manager):
         results = [s for s in manager.students if search_name.lower() in s.name.lower()]
         if results:
             for student in results:
-                st.write(f"ID: {student.id}, Name: {student.name}, Instruments: {', '.join(student.instruments)}")
+                st.write(f"ID: {student.id}, Name: {student.name}, Instrument: {student.instrument}")
         else:
             st.warning("No students found with that name.")
 

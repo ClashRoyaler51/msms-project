@@ -5,6 +5,7 @@ from gui.student_pages import show_student_management_page
 from gui.roster_pages import show_roster_page
 
 def launch():
+    
     """Sets up the main Streamlit application window and navigation."""
     st.set_page_config(layout="wide", page_title="Music School Management System")
 
@@ -12,6 +13,7 @@ def launch():
     # This is crucial so the manager object persists as we switch pages.
     if 'manager' not in st.session_state:
         st.session_state.manager = ScheduleManager()
+    show_student_management_page(st.session_state.manager)
 
     st.sidebar.title("MSMS Navigation")
     # Create a radio button menu in the sidebar for page navigation.
